@@ -7,10 +7,10 @@
 <div class="calculator">
     <div class="input">
         <ul class="input-history">
-           @foreach (var val in history)
-           {
-               <li>@val</li>
-           }
+            @foreach (var val in history)
+            {
+                <li>@val</li>
+            }
         </ul>
         <div class="input-value">
             @inputNumber
@@ -24,7 +24,7 @@
                     int copy = i;
                     <button class="numpad-@i" @onclick="(() => AddNumber(copy))">@i.ToString()</button>
                 }
-                <button class="numpad-period" @onclick="(() => this.inputNumber += '.')">,</button>
+                <button class="numpad-period" @onclick="(() => this.inputNumber += ',')">,</button>
             </div>
             <button @onclick="(() => this.inputNumber = Math.PI.ToString())">Pi</button>
             <button @onclick="(() => this.inputNumber = Math.E.ToString())">e</button>
@@ -67,7 +67,7 @@
         get
         {
             //if (this.dirty) return 0;
-            return double.Parse(this.inputNumber);
+            return double.Parse(this.inputNumber, System.Globalization.NumberStyles.AllowDecimalPoint);
         }
     }
     private bool dirty;
@@ -115,21 +115,25 @@
             this.dirty = true;
         }
 
+        this.history.Push(this.inputNumber);
+
         this._inputNumber = this.calculatorService.LastOperation.Calculate().ToString();
 
         // EXPERIMENTAL
         this.calculatorService.LastOperation.Clear();
         this.calculatorService.LastOperation = null;
 
-        this.history.Push(this.inputNumber);
+        this.history.Push($"= {this.inputNumber}");
     }
 
     private async Task BufferNumber(IOperation operation)
     {
         if (dirty)
         {
-            this.history.Pop();
-            this.history.Push(operation.GetName());
+            if (this.calculatorService.LastOperation != null)
+                this.history.Pop();
+
+            this.history.Push(operation.GetSymbol());
 
             this.RebufferOperation(operation);
 
@@ -138,7 +142,7 @@
         }
 
         this.history.Push(this.inputNumber);
-        this.history.Push(operation.GetName());
+        this.history.Push(operation.GetSymbol());
 
         this.ComputeOperation(calculatorService.LastOperation == null ? operation : calculatorService.LastOperation);
 
@@ -169,7 +173,7 @@
     private async Task ComputeFunction(IFunction function)
     {
         this.history.Push($"{function.GetName()}({inputNumber})");
-        this.inputNumber = function.Compute(this.number).ToString();
+        this._inputNumber = function.Compute(this.number).ToString();
 
         if (this.calculatorService.LastOperation != null)
         {

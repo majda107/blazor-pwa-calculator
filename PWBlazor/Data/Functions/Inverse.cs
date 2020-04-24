@@ -10,6 +10,9 @@ namespace PWBlazor.Data.Operations
     {
         public double Compute(double input)
         {
+            if (input == 0)
+                return double.NaN;
+
             return 1.0d / input;
         }
 

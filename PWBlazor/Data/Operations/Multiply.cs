@@ -46,6 +46,6 @@ namespace PWBlazor.Data.Operations
 
         public string GetName() => "Multiply";
 
-        public string GetSymbol() => "*";
+        public string GetSymbol() => "×";
     }
 }

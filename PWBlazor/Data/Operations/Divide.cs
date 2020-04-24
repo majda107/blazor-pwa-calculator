@@ -30,6 +30,9 @@ namespace PWBlazor.Data.Operations
         }
         public double Calculate()
         {
+            if (this.lastBuffered == 0)
+                return double.NaN;
+
             if (this.ready)
                 this.lastResult = this.lastResult / this.lastBuffered;
 
