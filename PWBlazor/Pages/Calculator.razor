@@ -6,46 +6,57 @@
 
 <div class="calculator">
     <div class="input">
-        @inputNumber
-    </div>
-    <div class="tiles">
-        <div class="numpad">
-            @for (int i = 9; i >= 0; i--)
-            {
-                int copy = i;
-                <button class="numpad-@i" @onclick="(() => AddNumber(copy))">@i.ToString()</button>
-            }
-            <button class="numpad-period" @onclick="(() => this.inputNumber += '.')">,</button>
-            <button class="numpad-equals" @onclick="CalculateNumber">=</button>
+        <ul class="input-history">
+           @foreach (var val in history)
+           {
+               <li>@val</li>
+           }
+        </ul>
+        <div class="input-value">
+            @inputNumber
         </div>
-        <button @onclick="(() => this.inputNumber = Math.PI.ToString())">Pi</button>
-        <button @onclick="(() => this.inputNumber = Math.E.ToString())">e</button>
-
-
-        @foreach (var operation in this.calculatorService.Operations)
-        {
-            var copy = operation;
-            <button class="operation-@operation.GetName().ToLower()" @onclick="(() => this.BufferNumber(copy))">@operation.GetSymbol()</button>
-        }
-
-        @foreach (var function in this.calculatorService.Functions)
-        {
-            var copy = function;
-            <button @onclick="(() => this.ComputeFunction(copy))">@function.GetName()</button>
-        }
-
-        <button class="action-del" @onclick="RemoveNumber">Del</button>
-        <button class="action-clear" @onclick="Clear">C</button>
     </div>
+    <div class="tiles-wrapper">
+        <div class="tiles">
+            <div class="numpad">
+                @for (int i = 9; i >= 0; i--)
+                {
+                    int copy = i;
+                    <button class="numpad-@i" @onclick="(() => AddNumber(copy))">@i.ToString()</button>
+                }
+                <button class="numpad-period" @onclick="(() => this.inputNumber += '.')">,</button>
+            </div>
+            <button @onclick="(() => this.inputNumber = Math.PI.ToString())">Pi</button>
+            <button @onclick="(() => this.inputNumber = Math.E.ToString())">e</button>
+
+
+            @foreach (var operation in this.calculatorService.Operations)
+            {
+                var copy = operation;
+                <button class="operation-@operation.GetName().ToLower()" @onclick="(() => this.BufferNumber(copy))">@operation.GetSymbol()</button>
+            }
+
+            @foreach (var function in this.calculatorService.Functions)
+            {
+                var copy = function;
+                <button @onclick="(() => this.ComputeFunction(copy))">@function.GetName()</button>
+            }
+
+            <button class="action-del" @onclick="RemoveNumber">Del</button>
+            <button class="action-clear" @onclick="Clear">C</button>
+        </div>
+    </div>
+
+    <button class="equals" @onclick="CalculateNumber">=</button>
 
     @*<br />
-    <div>
-        @foreach (var value in history)
-        {
-            <span>@value</span><br />
-        }
-    </div>
-    <br />*@
+        <div>
+            @foreach (var value in history)
+            {
+                <span>@value</span><br />
+            }
+        </div>
+        <br />*@
 </div>
 
 @code {
