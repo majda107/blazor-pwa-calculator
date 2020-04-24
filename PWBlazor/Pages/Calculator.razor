@@ -67,7 +67,8 @@
         get
         {
             //if (this.dirty) return 0;
-            return double.Parse(this.inputNumber, System.Globalization.NumberStyles.AllowDecimalPoint);
+            this.inputNumber = this.inputNumber.Replace(',', '.');
+            return double.Parse(this.inputNumber, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture);
         }
     }
     private bool dirty;
