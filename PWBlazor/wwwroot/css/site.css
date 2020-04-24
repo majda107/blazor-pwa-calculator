@@ -32,8 +32,8 @@
     -webkit-box-shadow: 10px 10px 33px -24px rgba(0,0,0,0.74);
     -moz-box-shadow: 10px 10px 33px -24px rgba(0,0,0,0.74);
     box-shadow: 10px 10px 33px -24px rgba(0,0,0,0.74);
-    max-width: 800px;
-    max-height: 700px;
+    max-width: 1000px;
+    max-height: 800px;
     min-height: 600px;
     min-width: 400px;
     /*background: rgb(69,0,110);

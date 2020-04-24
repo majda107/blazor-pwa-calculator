@@ -2,9 +2,11 @@
 @using PWBlazor.Data
 @using PWBlazor.Data.Operations
 @using PWBlazor.Data.Functions
+
+@inject IJSRuntime JSRuntime
 @*@inject CalculatorService calculatorService*@
 
-<div class="calculator">
+<div class="calculator" @onpaste="(async _ => PasteCallback())" @oncut="(async _ => CopyCutCallback(true))" @oncopy="(async _ => CopyCutCallback(false))">
     <div class="input">
         <ul class="input-history">
             @foreach (var val in history)
@@ -195,5 +197,26 @@
         //this.number = 0;
         this._inputNumber = "";
         this.history.Clear();
+    }
+
+
+    private ElementReference myUglyRef;
+
+    private async Task PasteCallback()
+    {
+        string data = await this.JSRuntime.InvokeAsync<string>("getClipboard");
+
+        double num = double.NaN;
+        if (!double.TryParse(data.Replace(',', '.'), System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out num)) return;
+
+        this.inputNumber += num.ToString();
+    }
+
+    private async Task CopyCutCallback(bool cut)
+    {
+        await this.JSRuntime.InvokeVoidAsync("copyClipboard", this.inputNumber);
+
+        if (cut)
+            this.inputNumber = "";
     }
 }
