@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30011.22
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PWBlazor", "PWBlazor\PWBlazor.csproj", "{2C829850-ED12-4EA4-82C0-C09C57BFA1F2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PWBlazor.Server", "PWBlazor.Server\PWBlazor.Server.csproj", "{420F570E-2C9E-43CF-B8B6-4CA12BCC1A36}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2C829850-ED12-4EA4-82C0-C09C57BFA1F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2C829850-ED12-4EA4-82C0-C09C57BFA1F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2C829850-ED12-4EA4-82C0-C09C57BFA1F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2C829850-ED12-4EA4-82C0-C09C57BFA1F2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{420F570E-2C9E-43CF-B8B6-4CA12BCC1A36}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{420F570E-2C9E-43CF-B8B6-4CA12BCC1A36}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{420F570E-2C9E-43CF-B8B6-4CA12BCC1A36}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{420F570E-2C9E-43CF-B8B6-4CA12BCC1A36}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {57FA17BD-A119-4EAE-B3E6-CC662E28FC1F}
+	EndGlobalSection
+EndGlobal

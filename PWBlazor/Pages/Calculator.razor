@@ -1,0 +1,183 @@
+﻿@page "/"
+@using PWBlazor.Data
+@using PWBlazor.Data.Operations
+@using PWBlazor.Data.Functions
+@*@inject CalculatorService calculatorService*@
+
+<div class="calculator">
+    <div class="input">
+        @inputNumber
+    </div>
+    <div class="tiles">
+        <div class="numpad">
+            @for (int i = 9; i >= 0; i--)
+            {
+                int copy = i;
+                <button class="numpad-@i" @onclick="(() => AddNumber(copy))">@i.ToString()</button>
+            }
+            <button class="numpad-period" @onclick="(() => this.inputNumber += '.')">,</button>
+            <button class="numpad-equals" @onclick="CalculateNumber">=</button>
+        </div>
+        <button @onclick="(() => this.inputNumber = Math.PI.ToString())">Pi</button>
+        <button @onclick="(() => this.inputNumber = Math.E.ToString())">e</button>
+
+
+        @foreach (var operation in this.calculatorService.Operations)
+        {
+            var copy = operation;
+            <button class="operation-@operation.GetName().ToLower()" @onclick="(() => this.BufferNumber(copy))">@operation.GetSymbol()</button>
+        }
+
+        @foreach (var function in this.calculatorService.Functions)
+        {
+            var copy = function;
+            <button @onclick="(() => this.ComputeFunction(copy))">@function.GetName()</button>
+        }
+
+        <button class="action-del" @onclick="RemoveNumber">Del</button>
+        <button class="action-clear" @onclick="Clear">C</button>
+    </div>
+
+    @*<br />
+    <div>
+        @foreach (var value in history)
+        {
+            <span>@value</span><br />
+        }
+    </div>
+    <br />*@
+</div>
+
+@code {
+    private CalculatorService calculatorService = new CalculatorService();
+    //private double number = 0;
+    public double number
+    {
+        get
+        {
+            //if (this.dirty) return 0;
+            return double.Parse(this.inputNumber);
+        }
+    }
+    private bool dirty;
+
+    private string _inputNumber = "";
+    public string inputNumber
+    {
+        get => this._inputNumber;
+        set
+        {
+            if (this.dirty)
+            {
+                this._inputNumber = value.Last().ToString();
+                this.dirty = false;
+            }
+            else
+                this._inputNumber = value;
+
+            this.StateHasChanged();
+        }
+    }
+
+
+    private Stack<string> history = new Stack<string>();
+
+    private async Task AddNumber(double num)
+    {
+        this.inputNumber += (((int)num).ToString());
+    }
+
+    private async Task RemoveNumber()
+    {
+        if (this.inputNumber.Length <= 0) return;
+        this.inputNumber = this.inputNumber.Substring(0, this.inputNumber.Length - 1);
+    }
+
+    private async Task CalculateNumber()
+    {
+        if (this.calculatorService.LastOperation == null)
+            return;
+
+        if (!this.dirty)
+        {
+            this.calculatorService.LastOperation.BufferNumber(this.number);
+            this.dirty = true;
+        }
+
+        this._inputNumber = this.calculatorService.LastOperation.Calculate().ToString();
+
+        // EXPERIMENTAL
+        this.calculatorService.LastOperation.Clear();
+        this.calculatorService.LastOperation = null;
+
+        this.history.Push(this.inputNumber);
+    }
+
+    private async Task BufferNumber(IOperation operation)
+    {
+        if (dirty)
+        {
+            this.history.Pop();
+            this.history.Push(operation.GetName());
+
+            this.RebufferOperation(operation);
+
+            this.calculatorService.LastOperation = operation;
+            return;
+        }
+
+        this.history.Push(this.inputNumber);
+        this.history.Push(operation.GetName());
+
+        this.ComputeOperation(calculatorService.LastOperation == null ? operation : calculatorService.LastOperation);
+
+        if (this.calculatorService.LastOperation != operation)
+        {
+            this.calculatorService.LastOperation?.Clear();
+            this.calculatorService.LastOperation = operation;
+
+            this.RebufferOperation(operation);
+        }
+
+        this.dirty = true;
+    }
+
+    private void ComputeOperation(IOperation operation)
+    {
+        operation.BufferNumber(this.number);
+        this.inputNumber = operation.Calculate().ToString();
+    }
+
+    private void RebufferOperation(IOperation operation)
+    {
+        operation.Clear();
+        operation.BufferNumber(this.number);
+        operation.Calculate();
+    }
+
+    private async Task ComputeFunction(IFunction function)
+    {
+        this.history.Push($"{function.GetName()}({inputNumber})");
+        this.inputNumber = function.Compute(this.number).ToString();
+
+        if (this.calculatorService.LastOperation != null)
+        {
+            if (!this.dirty)
+                this.ComputeOperation(this.calculatorService.LastOperation);
+
+            this.calculatorService.LastOperation.Clear();
+            this.calculatorService.LastOperation = null;
+        }
+    }
+
+    private async Task Clear()
+    {
+        //this.calculatorService.LastOperation?.Calculate();
+        this.calculatorService.LastOperation?.Clear();
+        this.calculatorService.LastOperation = null;
+
+        //this.number = 0;
+        this._inputNumber = "";
+        this.history.Clear();
+    }
+}
